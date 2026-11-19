@@ -112,7 +112,7 @@
       <div id="save">
         <h1>Enter your name:</h1>
         <input id="name" type="text" />
-        <button id="btn_save" type="submit">Save</button>
+        <button id="btn_save" type="submit">Save score</button>
       </div>
     </main>
 
@@ -129,7 +129,24 @@
             console.error("Could not update the counter:", err);
           }
         });
-      /* ADD DB SCHEMA AND ADD RECORD ON SAVE BTN CLICK */
+      document
+        .getElementById("btn-save")
+        .addEventListener("click", async () => {
+          const name = document.getElementById("name").value.trim();
+          const score = parseInt(document.getElementById("count").textContent);
+
+          const res = await fetch("/scores", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, score }),
+          });
+
+          if (res.ok) {
+            alert("Saved!");
+          } else {
+            alert("Something went wrong");
+          }
+        });
     </script>
   </body>
 </html>
