@@ -2,8 +2,9 @@ from fastapi import FastAPI, Depends
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 from .database import SessionLocal
-from .models import ScoreIn, Score
+from .models import ScoreIn, Score, ScoreOut
 from sqlalchemy.orm import Session
+from typing import List
 
 app = FastAPI()
 
@@ -31,8 +32,15 @@ async def click():
 
 @app.post("/api/save")
 def save_score(score: ScoreIn, db: Session = Depends(get_db)):
-    row = Score(name=score.name, score=score.score)
+    global count
+    row = Score(name=score.name, score=count)
     db.add(row)
     db.commit()
     db.refresh(row)
-    return {"id": row.id, "name": row.name, "score": row.score}
+
+    count = 0
+    return {"id": row.id, "name": row.name, "score": row.score, "count": count}
+
+@app.get("/api/scores", response_model=List[ScoreOut])
+async def get_scores(db: Session = Depends(get_db)):
+    return db.query(Score).order_by(Score.score.desc()).all()

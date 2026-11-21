@@ -12,4 +12,9 @@ class Score(Base):
 
 class ScoreIn(BaseModel):
     name: str
+
+class ScoreOut(BaseModel):
+    name: str
     score: int
+
+    model_config = {"from_attributes": True}

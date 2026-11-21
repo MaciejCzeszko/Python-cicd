@@ -115,8 +115,44 @@
         <button id="btn_save" type="submit">Save score</button>
       </div>
     </main>
+    <table id="scores_table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 
     <script>
+      async function loadScores() {
+        const res = await fetch("api/scores");
+        if (!res.ok) {
+          console.error("Failed to load scores");
+          return;
+        }
+        const scores = await res.json();
+
+        const tbody = document.querySelector("#scores_table tbody");
+        tbody.innerHTML = "";
+
+        for (const row of scores) {
+          const tr = document.createElement("tr");
+
+          const nameTd = document.createElement("td");
+          nameTd.textContent = row.name;
+
+          const scoreTd = document.createElement("td");
+          scoreTd.textContent = row.score;
+
+          tr.append(nameTd, scoreTd);
+          tbody.appendChild(tr);
+        }
+      }
+
+      loadScores();
+
       const countEl = document.getElementById("count");
       document
         .getElementById("btn_count")
@@ -130,18 +166,20 @@
           }
         });
       document
-        .getElementById("btn-save")
+        .getElementById("btn_save")
         .addEventListener("click", async () => {
           const name = document.getElementById("name").value.trim();
-          const score = parseInt(document.getElementById("count").textContent);
 
-          const res = await fetch("/scores", {
+          const res = await fetch("/api/save", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, score }),
+            body: JSON.stringify({ name }),
           });
 
           if (res.ok) {
+            const data = await res.json();
+            document.getElementById("count").textContent = data.count;
+            await loadScores();
             alert("Saved!");
           } else {
             alert("Something went wrong");
