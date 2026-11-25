@@ -33,6 +33,7 @@ build:
     - unset DOCKER_HOST
 
   script:
+    - docker info >/dev/null 2>&1 || (dockerd >/tmp/dockerd.log 2>&1 &)
     - for i in $(seq 1 60); do docker info >/dev/null 2>&1 && break; sleep 2; done
     - docker info
     - docker compose build
