@@ -27,10 +27,11 @@ test:
 
 build:
   stage: build
-  image: docker:27
+  image: docker:27-dind
 
   before_script:
     - unset DOCKER_HOST
 
   script:
+    - docker info >/dev/null
     - docker compose build
