@@ -2,6 +2,7 @@ stages:
   - lint
   - test
   - build
+  - deploy
 
 lint:
   stage: lint
@@ -37,3 +38,10 @@ build:
     - for i in $(seq 1 60); do docker info >/dev/null 2>&1 && break; sleep 2; done
     - docker info
     - docker compose build
+
+deploy:
+  stage: deploy
+  when: manual
+  script:
+    - echo "Deploying on this machine (the runner is on your PC)..."
+    - docker compose up -d --build
