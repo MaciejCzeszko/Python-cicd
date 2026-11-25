@@ -1,7 +1,9 @@
+from pydantic import BaseModel
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
+
 from .database import Base
-from pydantic import BaseModel
+
 
 class Score(Base):
     __tablename__ = "scores"

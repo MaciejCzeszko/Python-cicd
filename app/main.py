@@ -1,11 +1,12 @@
-from fastapi import FastAPI, Depends
-from fastapi.responses import HTMLResponse
-from pathlib import Path
-from .database import SessionLocal
-from .models import ScoreIn, Score, ScoreOut
-from sqlalchemy.orm import Session
-from typing import List
 import threading
+from pathlib import Path
+
+from fastapi import Depends, FastAPI
+from fastapi.responses import HTMLResponse
+from sqlalchemy.orm import Session
+
+from .database import SessionLocal
+from .models import Score, ScoreIn, ScoreOut
 
 app = FastAPI()
 
@@ -34,7 +35,7 @@ async def click():
         return {"count": count}
 
 @app.post("/api/save")
-def save_score(score: ScoreIn, db: Session = Depends(get_db)):
+def save_score(score: ScoreIn, db: Session = Depends(get_db)):  # noqa: B008
     global count
     with count_lock:
         row = Score(name=score.name, score=count)
@@ -44,6 +45,6 @@ def save_score(score: ScoreIn, db: Session = Depends(get_db)):
         reset_count = count
     return {"id": row.id, "name": row.name, "score": row.score, "count": reset_count}
 
-@app.get("/api/scores", response_model=List[ScoreOut])
-def get_scores(db: Session = Depends(get_db)):
+@app.get("/api/scores", response_model=list[ScoreOut])
+def get_scores(db: Session = Depends(get_db)):  # noqa: B008
     return db.query(Score).order_by(Score.score.desc()).limit(10).all()
