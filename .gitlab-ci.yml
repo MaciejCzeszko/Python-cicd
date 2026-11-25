@@ -33,5 +33,6 @@ build:
     - unset DOCKER_HOST
 
   script:
-    - until docker info >/dev/null 2>&1; do sleep 1; done
+    - for i in $(seq 1 60); do docker info >/dev/null 2>&1 && break; sleep 2; done
+    - docker info
     - docker compose build
