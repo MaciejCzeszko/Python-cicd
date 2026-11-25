@@ -29,5 +29,8 @@ build:
   stage: build
   image: docker:27
 
+  before_script:
+    - unset DOCKER_HOST
+
   script:
     - docker compose build
