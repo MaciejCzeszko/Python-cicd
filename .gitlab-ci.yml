@@ -33,5 +33,5 @@ build:
     - unset DOCKER_HOST
 
   script:
-    - docker info >/dev/null
+    - until docker info >/dev/null 2>&1; do sleep 1; done
     - docker compose build
